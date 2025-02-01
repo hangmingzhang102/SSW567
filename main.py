@@ -29,6 +29,8 @@ class TestTriangle(unittest.TestCase):
         self.assertEqual(classify_triangle(4, 3, 5), "scalene, is a right triangle")
     def test_not_triangle(self):
         self.assertEqual(classify_triangle(3, 3, 50), "Invalid triangle")
+    def test_not_triangle2(self):
+        self.assertEqual(classify_triangle(-3, -4, -5), "Invalid triangle")
     def test_stress(self):
         self.assertEqual(classify_triangle(100, 100, 180), "isosceles, is not a right triangle")
 
