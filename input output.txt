@@ -1,0 +1,8 @@
+C:\Not Docs\SIT\SSW567\HW 0b>python main.py
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.001s
+
+OK
+
+C:\Not Docs\SIT\SSW567\HW 0b>
