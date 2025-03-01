@@ -1,10 +1,12 @@
 import requests
 import json
+import unittest
 
 def get_github(id):
 
     urlRepo = f'https://api.github.com/users/{id}/repos'
     urlCommit = f'https://api.github.com/repos/{id}/'
+    returnString = ""
 
     try:
         response = requests.get(urlRepo)
@@ -15,22 +17,36 @@ def get_github(id):
                 repoResponse = requests.get(urlCommit + repo['name'] + '/commits')
                 repoResponse.raise_for_status()
                 repoRes = repoResponse.json()
-                print('Repo: ' + repo['name'] + ' Number of commits: ' + str(len(repoRes)))
+                returnLine = 'Repo: ' + repo['name'] + ' Number of commits: ' + str(len(repoRes))
+                returnString += returnLine + '\n'
             except requests.exceptions.HTTPError as err:
-                print(err)
-            except json.JSONDecodeError:
-                print("bad json")
-        return None
+                return err
+            except json.JSONDecodeError as err:
+                return err
+        return returnString
     except requests.exceptions.HTTPError as err:
-        print(err)
-        return None
+        return err
     except json.JSONDecodeError:
-        print("bad json")
-        return None
+        return err
 
+class TestGetGit(unittest.TestCase):
+    def test_get_github(self):
+        results = get_github('richkempinski')
+        self.assertEqual(results, 'Repo: csp Number of commits: 2\n'
+                                  'Repo: hellogitworld Number of commits: 30\n'
+                                  'Repo: helloworld Number of commits: 6\n'
+                                  'Repo: Mocks Number of commits: 10\n'
+                                  'Repo: Project1 Number of commits: 2\n'
+                                  'Repo: richkempinski.github.io Number of commits: 9\n'
+                                  'Repo: threads-of-life Number of commits: 1\n'
+                                  'Repo: try_nbdev Number of commits: 2\n'
+                                  'Repo: try_nbdev2 Number of commits: 5\n')
+
+    def test_get_error(self):
+        results = get_github('bad_user')
+        print(results)
 
 if __name__ == '__main__':
-
-    get_github('richkempinski')
+    unittest.main()
 
 
