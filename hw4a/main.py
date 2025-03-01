@@ -1,6 +1,10 @@
+from unittest import mock
 import requests
 import json
 import unittest
+
+from requests.cookies import MockResponse
+
 
 def get_github(id):
 
@@ -10,7 +14,7 @@ def get_github(id):
 
     try:
         response = requests.get(urlRepo)
-        response.raise_for_status()
+        print(response)
         res = response.json()
         for repo in res:
             try:
@@ -30,17 +34,16 @@ def get_github(id):
         return err
 
 class TestGetGit(unittest.TestCase):
-    def test_get_github(self):
+    @mock.patch('requests.get')
+    def test_get_github(self, mockedReq):
+        data = {
+            "name": "test1",
+            "commits": 2,
+        }
+        jsonData = json.dumps(data)
+        mockedReq.return_value = MockResponse('[{"sha":1},{"sha":2}…{"sha":8}]')
         results = get_github('richkempinski')
-        self.assertEqual(results, 'Repo: csp Number of commits: 2\n'
-                                  'Repo: hellogitworld Number of commits: 30\n'
-                                  'Repo: helloworld Number of commits: 6\n'
-                                  'Repo: Mocks Number of commits: 10\n'
-                                  'Repo: Project1 Number of commits: 2\n'
-                                  'Repo: richkempinski.github.io Number of commits: 9\n'
-                                  'Repo: threads-of-life Number of commits: 1\n'
-                                  'Repo: try_nbdev Number of commits: 2\n'
-                                  'Repo: try_nbdev2 Number of commits: 5\n')
+        self.assertEqual(results, 'Repo: test1 Number of commits: 2\n')
 
     def test_get_error(self):
         results = get_github('bad_user')
